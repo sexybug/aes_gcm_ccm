@@ -1,0 +1,11 @@
+*
+!*.h
+!*.c
+!.vscode
+!.vscode/*
+!.*
+!*.md
+!gcm
+!aes
+!aes_gcm
+
