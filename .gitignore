@@ -6,6 +6,11 @@
 !.*
 !*.md
 !gcm
+!gcm/test
 !aes
+!aes/test
 !aes_gcm
+!aes_gcm/test
+
+
 
