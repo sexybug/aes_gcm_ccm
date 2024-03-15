@@ -14,6 +14,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "../align.h"
 
 #ifdef  __cplusplus
 extern "C" {
@@ -40,6 +41,35 @@ typedef struct {
 	uint32_t rk[4 * (AES_MAX_ROUNDS + 1)];
 	size_t rounds;
 } AES_KEY;
+
+typedef struct {
+	uint8_t *key;
+	AES_KEY round_key;
+} __align4 AES_ECB_CTX;
+typedef struct {
+	uint8_t *key;
+	uint8_t *iv;
+	AES_KEY round_key;
+} __align4 AES_CBC_CTX;
+typedef union {
+	AES_ECB_CTX ecb;
+    AES_CBC_CTX cbc;
+}AES_MODE_CTX;
+
+typedef struct {
+	uint8_t *key;
+	AES_KEY round_key;
+} __align4 SM4_ECB_CTX;
+typedef struct {
+	uint8_t *key;
+	uint8_t *iv;
+	AES_KEY round_key;
+} __align4 SM4_CBC_CTX;
+typedef union {
+	AES_ECB_CTX ecb;
+    AES_CBC_CTX cbc;
+}SM4_MODE_CTX;
+
 
 int aes_set_encrypt_key(AES_KEY *key, const uint8_t *raw_key, size_t raw_key_len);
 int aes_set_decrypt_key(AES_KEY *key, const uint8_t *raw_key, size_t raw_key_len);
