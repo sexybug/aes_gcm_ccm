@@ -24,7 +24,7 @@ e3aa212f2c02a4e035c17e2329aca12e\
     int P_len = 0;
     cipher_f cipher = aes192_enc;
 
-    uint8_t std_K[32], std_IV[64], std_AAD[20], std_P[64], std_C[64], std_T[16], enc_out[64], dec_out[64], enc_Tag[16], dec_Tag[16];
+    __align4 uint8_t std_K[32], std_IV[64], std_AAD[20], std_P[64], std_C[64], std_T[16], enc_out[64], dec_out[64], enc_Tag[16], dec_Tag[16];
 
     HexString2Hex(K_str, K_len, std_K);
     HexString2Hex(IV_str, IV_len, std_IV);
@@ -34,7 +34,7 @@ e3aa212f2c02a4e035c17e2329aca12e\
     HexString2Hex(T_str, 16, std_T);
 
     GCM_CTX ctx;
-    gcm_init(&ctx, cipher, std_K, K_len, std_IV, IV_len, 16);
+    gcm_init(&ctx, cipher, GCM_ENCRYPT, std_K, K_len, std_IV, IV_len, 16);
 
     int out_len1, out_len2;
     gcm_updateAAD(&ctx, std_AAD, AAD_len, 1);

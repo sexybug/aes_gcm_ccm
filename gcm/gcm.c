@@ -1,9 +1,6 @@
 
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
 #include "gcm.h"
-#include "io.h"
+#include <string.h>
 
 /**
  * @brief GF(2^128)上的本原多项式
@@ -164,7 +161,7 @@ static void inc32(uint8_t *CTR)
 }
 void gctr_init(GCTR_CTX *ctx, const uint8_t *K, int K_len, const uint8_t *ICB, cipher_f cipher)
 {
-    ctx->K_len=K_len;
+    ctx->K_len = K_len;
     memcpy(ctx->K, K, K_len);
     memcpy(ctx->CB, ICB, 16);
     ctx->total_len = 0;
@@ -226,7 +223,7 @@ void gctr_final(GCTR_CTX *ctx, uint8_t *Y, int *Ylen)
     int buf_len = ctx->total_len % 16;
     if (buf_len > 0)
     {
-        uint8_t T[16];
+        __align4 uint8_t T[16];
         ctx->cipher(ctx->K, ctx->CB, T);
         XOR(Y, ctx->buf, T, buf_len);
         *Ylen = buf_len;
@@ -254,12 +251,14 @@ static void u64_2_u8(uint64_t X, uint8_t *Y)
     Y[6] = (uint8_t)(X >> 8);
     Y[7] = (uint8_t)(X >> 0);
 }
-void gcm_init(GCM_CTX *ctx, cipher_f cipher, const uint8_t *K, int K_len, const uint8_t *IV, int IV_len, int TAG_len)
+void gcm_init(GCM_CTX *ctx, cipher_f cipher, GCM_ENC_DEC_MODE enc_dec,
+              const uint8_t *K, int K_len, const uint8_t *IV, int IV_len, int TAG_len)
 {
+    ctx->enc_dec = enc_dec;
     ctx->tag_len = TAG_len;
     ctx->AAD_len = 0;
 
-    uint8_t H[16];
+    __align4 uint8_t H[16];
     memset(H, 0, 16);
     cipher(K, H, H);
 
@@ -321,15 +320,20 @@ void gcm_updateAAD(GCM_CTX *ctx, const uint8_t *AAD, int AAD_len, bool is_last)
 
 void gcm_update(GCM_CTX *ctx, const uint8_t *in, int in_len, uint8_t *out, int *out_len)
 {
-    gctr_update(&(ctx->gctr), in, in_len, out, out_len);
-    ghash_update(&(ctx->ghash), out, *out_len);
+    if (ctx->enc_dec == GCM_ENCRYPT)
+    {
+        gctr_update(&(ctx->gctr), in, in_len, out, out_len);
+        ghash_update(&(ctx->ghash), out, *out_len);
+    }
+    else if (ctx->enc_dec == GCM_DECRYPT)
+    {
+        ghash_update(&(ctx->ghash), in, in_len);
+        gctr_update(&(ctx->gctr), in, in_len, out, out_len);
+    }
 }
 
-void gcm_final(GCM_CTX *ctx, uint8_t *out, int *out_len, uint8_t *Tag)
+void gcm_retrieve_tag(GCM_CTX *ctx, uint8_t *tag, int tag_len)
 {
-    gctr_final(&(ctx->gctr), out, out_len);
-    ghash_update(&(ctx->ghash), out, *out_len);
-
     int AAD_len = ctx->AAD_len;
     int in_len = ctx->gctr.total_len;
     int rest_len = in_len % 16;
@@ -345,7 +349,7 @@ void gcm_final(GCM_CTX *ctx, uint8_t *out, int *out_len, uint8_t *Tag)
     u64_2_u8(in_bit_len, pad + 8);
     ghash_update(&(ctx->ghash), pad, 16);
 
-    uint8_t S[16], T1[16];
+    __align4 uint8_t S[16], T1[16];
     ghash_final(&(ctx->ghash), S);
 
     int T1_len = 0, tmp_len = 0;
@@ -355,5 +359,16 @@ void gcm_final(GCM_CTX *ctx, uint8_t *out, int *out_len, uint8_t *Tag)
     T1_len += tmp_len;
     gctr_final(&gctr, T1 + tmp_len, &tmp_len);
     T1_len += tmp_len;
-    memcpy(Tag, T1, ctx->tag_len);
+    memcpy(tag, T1, ctx->tag_len);
+}
+
+void gcm_final(GCM_CTX *ctx, uint8_t *out, int *out_len, uint8_t *Tag)
+{
+    gctr_final(&(ctx->gctr), out, out_len);
+
+    if (ctx->enc_dec == GCM_ENCRYPT)
+    {
+        ghash_update(&(ctx->ghash), out, *out_len);
+    }
+    gcm_retrieve_tag(ctx, Tag, ctx->tag_len);
 }

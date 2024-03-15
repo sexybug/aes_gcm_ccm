@@ -1,6 +1,4 @@
 #include "test.h"
-#include <stdio.h>
-#include <stdint.h>
 
 void dump_mem(const void *ptr, int len)
 {

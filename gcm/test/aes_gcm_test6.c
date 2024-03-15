@@ -15,10 +15,10 @@ c3c0c95156809539fcf0e2429a6b5254\
 86a7a9531534f7da2e4c303d8a318a72\
 1c3c0c95956809532fcf0e2449a6b525\
 b16aedf5aa0de657ba637b39";
-    uint8_t C_str[128] = "42831ec2217774244b7221b784d0d49c\
-e3aa212f2c02a4e035c17e2329aca12e\
-21d514b25466931c7d8f6a5aac84aa05\
-1ba30b396a0aac973d58e091";
+    uint8_t C_str[128] = "8ce24998625615b603a033aca13fb894\
+be9112a5c3a211a8ba262a3cca7e2ca7\
+01e4a9a4fba43c90ccdcb281d48c7c6f\
+d62875d2aca417034c34aee5";
     uint8_t T_str[32] = "619cc5aefffe0bfa462af43c1699d050";
 
     int K_len = 16;
@@ -27,7 +27,7 @@ e3aa212f2c02a4e035c17e2329aca12e\
     int P_len = 60;
     cipher_f cipher = aes128_enc;
 
-    uint8_t std_K[32], std_IV[64], std_AAD[20], std_P[64], std_C[64], std_T[16], enc_out[64], dec_out[64], enc_Tag[16], dec_Tag[16];
+    __align4 uint8_t std_K[32], std_IV[64], std_AAD[20], std_P[64], std_C[64], std_T[16], enc_out[64], dec_out[64], enc_Tag[16], dec_Tag[16];
 
     HexString2Hex(K_str, K_len, std_K);
     HexString2Hex(IV_str, IV_len, std_IV);
@@ -37,7 +37,7 @@ e3aa212f2c02a4e035c17e2329aca12e\
     HexString2Hex(T_str, 16, std_T);
 
     GCM_CTX ctx;
-    gcm_init(&ctx, cipher, std_K, K_len, std_IV, IV_len, 16);
+    gcm_init(&ctx, cipher, GCM_ENCRYPT, std_K, K_len, std_IV, IV_len, 16);
 
     int out_len1, out_len2;
     gcm_updateAAD(&ctx, std_AAD, AAD_len, 1);

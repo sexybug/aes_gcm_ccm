@@ -441,21 +441,24 @@ void aes_decrypt(const AES_KEY *aes_key, const uint8_t in[16], uint8_t out[16])
 	memset(state, 0, sizeof(state));
 }
 
-void aes128_enc(const uint8_t *key, const uint8_t *plaintext, uint8_t *ciphertext)
+void aes128_enc(const uint8_t *key, const uint8_t *in, uint8_t *out)
 {
 	AES_KEY aes_key;
     aes_set_encrypt_key(&aes_key, key, 16);
-    aes_encrypt(&aes_key, plaintext, ciphertext);
+    aes_encrypt(&aes_key, in, out);
 }
-void aes192_enc(const uint8_t *key, const uint8_t *plaintext, uint8_t *ciphertext)
+void aes192_enc(const uint8_t *key, const uint8_t *in, uint8_t *out)
 {
 	AES_KEY aes_key;
     aes_set_encrypt_key(&aes_key, key, 24);
-    aes_encrypt(&aes_key, plaintext, ciphertext);
+    aes_encrypt(&aes_key, in, out);
 }
-void aes256_enc(const uint8_t *key, const uint8_t *plaintext, uint8_t *ciphertext)
+void aes256_enc(const uint8_t *key, const uint8_t *in, uint8_t *out)
 {
 	AES_KEY aes_key;
     aes_set_encrypt_key(&aes_key, key, 32);
-    aes_encrypt(&aes_key, plaintext, ciphertext);
+    aes_encrypt(&aes_key, in, out);
 }
+
+
+

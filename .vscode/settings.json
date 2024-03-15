@@ -4,6 +4,10 @@
         "stdio.h": "c",
         "aes.h": "c",
         "string.h": "c",
-        "gcm.h": "c"
+        "gcm.h": "c",
+        "io.h": "c",
+        "stdbool.h": "c",
+        "aes_gcm.h": "c",
+        "align.h": "c"
     }
 }

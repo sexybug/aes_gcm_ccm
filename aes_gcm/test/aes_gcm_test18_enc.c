@@ -1,7 +1,7 @@
 
 #include "../../test.h"
 #include "../../aes/aes.h"
-#include "../gcm.h"
+#include "../aes_gcm.h"
 
 int main()
 {
@@ -27,9 +27,8 @@ a2418997200ef82e44ae7e3f";
     int IV_len = 60;
     int AAD_len = 20;
     int P_len = 60;
-    cipher_f cipher = aes256_enc;
 
-    __align4 uint8_t std_K[32], std_IV[64], std_AAD[20], std_P[64], std_C[64], std_T[16], enc_out[64], dec_out[64], enc_Tag[16], dec_Tag[16];
+    __align4 uint8_t std_K[32], std_IV[64], std_AAD[20], std_P[64], std_C[64], std_T[16], out[64], dec_out[64], Tag[16];
 
     HexString2Hex(K_str, K_len, std_K);
     HexString2Hex(IV_str, IV_len, std_IV);
@@ -38,19 +37,19 @@ a2418997200ef82e44ae7e3f";
     HexString2Hex(C_str, P_len, std_C);
     HexString2Hex(T_str, 16, std_T);
 
-    GCM_CTX ctx;
-    gcm_init(&ctx, cipher, GCM_ENCRYPT, std_K, K_len, std_IV, IV_len, 16);
+    AES_GCM_CTX ctx;
+    aes_gcm_init(&ctx, GCM_ENCRYPT, std_K, K_len, std_IV, IV_len, 16);
 
     int out_len1, out_len2;
-    gcm_updateAAD(&ctx, std_AAD, AAD_len, 1);
-    gcm_update(&ctx, std_P, P_len, enc_out, &out_len1);
+    aes_gcm_updateAAD(&ctx, std_AAD, AAD_len, 1);
+    aes_gcm_update(&ctx, std_P, P_len, out, &out_len1);
 
-    gcm_final(&ctx, enc_out + out_len1, &out_len2, enc_Tag);
-    dump_mem(enc_out, P_len);
-    dump_mem(enc_Tag, 16);
+    aes_gcm_final(&ctx, out + out_len1, &out_len2, Tag);
+    dump_mem(out, P_len);
+    dump_mem(Tag, 16);
 
-    int cmpOUT = memcmp(enc_out, std_C, P_len);
-    int cmpTag = memcmp(enc_Tag, std_T, 16);
+    int cmpOUT = memcmp(out, std_C, P_len);
+    int cmpTag = memcmp(Tag, std_T, 16);
 
     return (cmpOUT == 0) && (cmpTag == 0);
 }
