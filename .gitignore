@@ -13,3 +13,4 @@
 !aes_gcm/test
 !ccm
 !ccm/test
+!cipher

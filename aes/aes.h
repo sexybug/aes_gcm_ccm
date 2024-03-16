@@ -42,6 +42,8 @@ typedef struct {
 	size_t rounds;
 } AES_KEY;
 
+
+
 typedef struct {
 	uint8_t *key;
 	AES_KEY round_key;
@@ -49,6 +51,7 @@ typedef struct {
 typedef struct {
 	uint8_t *key;
 	uint8_t *iv;
+	uint8_t working_iv[16];
 	AES_KEY round_key;
 } __align4 AES_CBC_CTX;
 typedef union {
@@ -61,10 +64,12 @@ typedef struct {
 	AES_KEY round_key;
 } __align4 SM4_ECB_CTX;
 typedef struct {
+	uint32_t feedback_bits;
 	uint8_t *key;
 	uint8_t *iv;
+	uint8_t working_iv[16];
 	AES_KEY round_key;
-} __align4 SM4_CBC_CTX;
+} __align4 SM4_CFB_CTX;
 typedef union {
 	AES_ECB_CTX ecb;
     AES_CBC_CTX cbc;

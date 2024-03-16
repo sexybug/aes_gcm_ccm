@@ -8,6 +8,7 @@
         "io.h": "c",
         "stdbool.h": "c",
         "aes_gcm.h": "c",
-        "align.h": "c"
+        "align.h": "c",
+        "stdint.h": "c"
     }
 }
