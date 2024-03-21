@@ -76,6 +76,7 @@ int aes_set_decrypt_key(AES_KEY *key, const uint8_t *raw_key, size_t raw_key_len
 void aes_encrypt(const AES_KEY *key, const uint8_t in[AES_BLOCK_SIZE], uint8_t out[AES_BLOCK_SIZE]);
 void aes_decrypt(const AES_KEY *key, const uint8_t in[AES_BLOCK_SIZE], uint8_t out[AES_BLOCK_SIZE]);
 void aes128_enc(const uint8_t *key, const uint8_t *in, uint8_t *out);
+void aes128_dec(const uint8_t *key, const uint8_t *in, uint8_t *out);
 void aes192_enc(const uint8_t *key, const uint8_t *in, uint8_t *out);
 void aes256_enc(const uint8_t *key, const uint8_t *in, uint8_t *out);
 

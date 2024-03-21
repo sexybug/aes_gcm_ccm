@@ -21,7 +21,7 @@ e3aa212f2c02a4e035c17e2329aca12e\
     int K_len = 16;
     int IV_len = 12;
     int AAD_len = 20;
-    int P_len = 60;
+    int P_len = 16;
 
     __align4 uint8_t std_K[32], std_IV[16], std_AAD[20], std_P[64], std_C[64], std_T[16], out[64], dec_out[64], Tag[16];
 

@@ -447,6 +447,12 @@ void aes128_enc(const uint8_t *key, const uint8_t *in, uint8_t *out)
     aes_set_encrypt_key(&aes_key, key, 16);
     aes_encrypt(&aes_key, in, out);
 }
+void aes128_dec(const uint8_t *key, const uint8_t *in, uint8_t *out)
+{
+	AES_KEY aes_key;
+    aes_set_decrypt_key(&aes_key, key, 16);
+    aes_decrypt(&aes_key, in, out);
+}
 void aes192_enc(const uint8_t *key, const uint8_t *in, uint8_t *out)
 {
 	AES_KEY aes_key;

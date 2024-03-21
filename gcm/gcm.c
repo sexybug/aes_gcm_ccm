@@ -95,7 +95,7 @@ void ghash_init(GHASH_CTX *ctx, const uint8_t *H)
 }
 void ghash_update(GHASH_CTX *ctx, const uint8_t *X, int Xlen)
 {
-    if (Xlen == 0)
+    if (Xlen <= 0)
     {
         return;
     }
@@ -171,7 +171,7 @@ void gctr_init(GCTR_CTX *ctx, const uint8_t *K, int K_len, const uint8_t *ICB, c
 void gctr_update(GCTR_CTX *ctx, const uint8_t *X, int Xlen, uint8_t *Y, int *Ylen)
 {
     *Ylen = 0;
-    if (Xlen == 0)
+    if (Xlen <= 0)
     {
         return;
     }
@@ -220,17 +220,14 @@ void gctr_update(GCTR_CTX *ctx, const uint8_t *X, int Xlen, uint8_t *Y, int *Yle
 
 void gctr_final(GCTR_CTX *ctx, uint8_t *Y, int *Ylen)
 {
+    *Ylen = 0;
     int buf_len = ctx->total_len % 16;
     if (buf_len > 0)
     {
         __align4 uint8_t T[16];
         ctx->cipher(ctx->K, ctx->CB, T);
         XOR(Y, ctx->buf, T, buf_len);
-        *Ylen = buf_len;
-    }
-    else
-    {
-        *Ylen = 0;
+        *Ylen += buf_len;
     }
 }
 
@@ -298,7 +295,7 @@ void gcm_init(GCM_CTX *ctx, cipher_f cipher, GCM_ENC_DEC_MODE enc_dec,
 
 void gcm_updateAAD(GCM_CTX *ctx, const uint8_t *AAD, int AAD_len, bool is_last)
 {
-    if (AAD_len == 0)
+    if (AAD_len <= 0)
     {
         return;
     }

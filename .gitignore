@@ -13,3 +13,11 @@
 !aes_gcm/test
 !ccm
 !ccm/test
+!cbc
+!cbc/test
+!cbc_mac
+!cbc_mac/test
+!ctr
+!ctr/test
+!aes_ccm
+!aes_ccm/test
