@@ -17,7 +17,6 @@ int main()
     int A_len = 65536;
     int P_len = 32;
     int T_len = 14;
-    cipher_f cipher = aes128_enc;
 
     __align4 uint8_t std_K[32], std_N[16], std_A[256], std_P[64], std_C[64], std_T[16], enc_out[64], dec_out[64], enc_Tag[16], dec_Tag[16];
 
