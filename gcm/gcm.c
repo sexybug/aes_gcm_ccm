@@ -251,6 +251,11 @@ static void u64_2_u8(uint64_t X, uint8_t *Y)
 void gcm_init(GCM_CTX *ctx, cipher_f cipher, GCM_ENC_DEC_MODE enc_dec,
               const uint8_t *K, int K_len, const uint8_t *IV, int IV_len, int TAG_len)
 {
+    if ((TAG_len < 4) || (TAG_len > 16))
+    {
+        return;
+    }
+
     ctx->enc_dec = enc_dec;
     ctx->tag_len = TAG_len;
     ctx->AAD_len = 0;

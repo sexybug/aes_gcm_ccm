@@ -5,8 +5,6 @@
 
 int main(int argc, char **argv)
 {
-    uint32_t a=0x012345678;
-    uint32_t *b=&a;
     uint8_t p_str[32] = "00000000000000000000000000000000";
     uint8_t k_str[32] = "feffe9928665731c6d6a8f9467308308";
     uint8_t c_str[32] = "69c4e0d86a7b0430d8cdb78070b4c55a";

@@ -50,6 +50,18 @@ typedef struct
     int AAD_len;
 } __align4 GCM_CTX;
 
+/**
+ * @brief 
+ * 
+ * @param ctx 
+ * @param cipher 
+ * @param enc_dec 
+ * @param K 
+ * @param K_len 
+ * @param IV 
+ * @param IV_len 
+ * @param TAG_len The byte length of the tag, must in [4,16]
+ */
 void gcm_init(GCM_CTX *ctx, cipher_f cipher, GCM_ENC_DEC_MODE enc_dec,
               const uint8_t *K, int K_len, const uint8_t *IV, int IV_len, int TAG_len);
 void gcm_updateAAD(GCM_CTX *ctx, const uint8_t *AAD, int AAD_len, bool is_last);
