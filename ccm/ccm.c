@@ -45,7 +45,7 @@ int ccm_init(CCM_CTX *ctx, cipher_f cipher, CCM_ENC_DEC_MODE enc_dec, const uint
         return -1;
     }
     uint64_t q = 15 - nonce_len;
-    if ((q < 8) && (message_len >= (1 << (q * 8))))
+    if ((q < 8) && (message_len >= ((uint64_t)1 << (q * 8))))
     {
         return -1;
     }
