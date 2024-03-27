@@ -62,29 +62,32 @@ int ccm_init(CCM_CTX *ctx, cipher_f cipher, CCM_ENC_DEC_MODE enc_dec, const uint
     cbc_mac_update(&(ctx->cbc_mac), B0, 16);
 
     // a
-    uint8_t A[10];
-    uint64_t a = AData_len;
-    int a_len;
-    if (a < ((1 << 16) - (1 << 8)))
+    if (AData_len > 0)
     {
-        integer_to_bytes(a, 2, A);
-        a_len = 2;
+        uint8_t A[10];
+        uint64_t a = AData_len;
+        int a_len;
+        if (a < ((1 << 16) - (1 << 8)))
+        {
+            integer_to_bytes(a, 2, A);
+            a_len = 2;
+        }
+        else if (a < ((uint64_t)1 << 32))
+        {
+            A[0] = 0xff;
+            A[1] = 0xfe;
+            integer_to_bytes(a, 4, A + 2);
+            a_len = 6;
+        }
+        else
+        {
+            A[0] = 0xff;
+            A[1] = 0xff;
+            integer_to_bytes(a, 8, A + 2);
+            a_len = 10;
+        }
+        cbc_mac_update(&(ctx->cbc_mac), A, a_len);
     }
-    else if (a < ((uint64_t)1 << 32))
-    {
-        A[0] = 0xff;
-        A[1] = 0xfe;
-        integer_to_bytes(a, 4, A + 2);
-        a_len = 6;
-    }
-    else
-    {
-        A[0] = 0xff;
-        A[1] = 0xff;
-        integer_to_bytes(a, 8, A + 2);
-        a_len = 10;
-    }
-    cbc_mac_update(&(ctx->cbc_mac), A, a_len);
 
     // CTR0
     __align4 uint8_t Ctr[16];
@@ -102,11 +105,11 @@ int ccm_init(CCM_CTX *ctx, cipher_f cipher, CCM_ENC_DEC_MODE enc_dec, const uint
 
 void ccm_updateAData(CCM_CTX *ctx, const uint8_t *AData, int len, bool is_last)
 {
-    if (len <= 0)
+    if (len > 0)
     {
-        return;
+        cbc_mac_update(&(ctx->cbc_mac), AData, len);
     }
-    cbc_mac_update(&(ctx->cbc_mac), AData, len);
+    
     if (is_last)
     {
         uint8_t T[16];
