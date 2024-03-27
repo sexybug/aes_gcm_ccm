@@ -300,13 +300,12 @@ void gcm_init(GCM_CTX *ctx, cipher_f cipher, GCM_ENC_DEC_MODE enc_dec,
 
 void gcm_updateAAD(GCM_CTX *ctx, const uint8_t *AAD, int AAD_len, bool is_last)
 {
-    if (AAD_len <= 0)
+    if (AAD_len > 0)
     {
-        return;
+        ctx->AAD_len += AAD_len;
+        ghash_update(&(ctx->ghash), AAD, AAD_len);
     }
-    ctx->AAD_len += AAD_len;
 
-    ghash_update(&(ctx->ghash), AAD, AAD_len);
     if (is_last)
     {
         int A_len = ctx->ghash.total_len;
