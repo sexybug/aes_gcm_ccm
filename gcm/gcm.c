@@ -61,7 +61,7 @@ static void right_move1(uint8_t *X, int len)
  * @param X
  * @param Y
  */
-void gf128_mul(uint8_t *Z, const uint8_t *X, const uint8_t *Y)
+static void gf128_mul(uint8_t *Z, const uint8_t *X, const uint8_t *Y)
 {
     int i;
     uint8_t V[16];
@@ -87,13 +87,13 @@ void gf128_mul(uint8_t *Z, const uint8_t *X, const uint8_t *Y)
     }
 }
 
-void ghash_init(GHASH_CTX *ctx, const uint8_t *H)
+static void ghash_init(GHASH_CTX *ctx, const uint8_t *H)
 {
     memcpy(ctx->H, H, 16);
     memset(ctx->Y, 0, 16);
     ctx->total_len = 0;
 }
-void ghash_update(GHASH_CTX *ctx, const uint8_t *X, int Xlen)
+static void ghash_update(GHASH_CTX *ctx, const uint8_t *X, int Xlen)
 {
     if (Xlen <= 0)
     {
@@ -133,7 +133,7 @@ void ghash_update(GHASH_CTX *ctx, const uint8_t *X, int Xlen)
         memcpy(ctx->buf, X, Xlen);
     }
 }
-int ghash_final(GHASH_CTX *ctx, uint8_t *Y)
+static int ghash_final(GHASH_CTX *ctx, uint8_t *Y)
 {
     if (ctx->total_len % 16 != 0)
     {
@@ -159,7 +159,7 @@ static void inc32(uint8_t *CTR)
         CTR[i]++;
     }
 }
-void gctr_init(GCTR_CTX *ctx, const uint8_t *K, int K_len, const uint8_t *ICB, cipher_f cipher)
+static void gctr_init(GCTR_CTX *ctx, const uint8_t *K, int K_len, const uint8_t *ICB, cipher_f cipher)
 {
     ctx->K_len = K_len;
     memcpy(ctx->K, K, K_len);
@@ -168,7 +168,7 @@ void gctr_init(GCTR_CTX *ctx, const uint8_t *K, int K_len, const uint8_t *ICB, c
     ctx->cipher = cipher;
 }
 
-void gctr_update(GCTR_CTX *ctx, const uint8_t *X, int Xlen, uint8_t *Y, int *Ylen)
+static void gctr_update(GCTR_CTX *ctx, const uint8_t *X, int Xlen, uint8_t *Y, int *Ylen)
 {
     *Ylen = 0;
     if (Xlen <= 0)
@@ -218,7 +218,7 @@ void gctr_update(GCTR_CTX *ctx, const uint8_t *X, int Xlen, uint8_t *Y, int *Yle
     }
 }
 
-void gctr_final(GCTR_CTX *ctx, uint8_t *Y, int *Ylen)
+static void gctr_final(GCTR_CTX *ctx, uint8_t *Y, int *Ylen)
 {
     *Ylen = 0;
     int buf_len = ctx->total_len % 16;
@@ -333,7 +333,7 @@ void gcm_update(GCM_CTX *ctx, const uint8_t *in, int in_len, uint8_t *out, int *
     }
 }
 
-void gcm_retrieve_tag(GCM_CTX *ctx, uint8_t *tag, int tag_len)
+static void gcm_retrieve_tag(GCM_CTX *ctx, uint8_t *tag, int tag_len)
 {
     int AAD_len = ctx->AAD_len;
     int in_len = ctx->gctr.total_len;
